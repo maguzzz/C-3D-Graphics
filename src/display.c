@@ -63,8 +63,6 @@ void destroy_window(void)
     SDL_Quit();
 }
 
-
-
 void render_color_buffer(void)
 {
     SDL_UpdateTexture(
@@ -93,7 +91,6 @@ void clear_color_buffer(uint32_t color)
     }
 }
 
-
 void draw_grid(uint32_t color, int gridSize)
 {
     for (int y = 0; y < WindowHeight; y++)
@@ -108,21 +105,43 @@ void draw_grid(uint32_t color, int gridSize)
     }
 };
 
-
-void draw_rect(uint32_t color, int x_pos, int y_pos, int height, int width){
+void draw_rect(uint32_t color, int x_pos, int y_pos, int height, int width)
+{
     for (int y = 0; y < WindowHeight; y++)
     {
         for (int x = 0; x < WindowWidth; x++)
         {
-            if(x_pos + width > WindowWidth || y_pos + height  > WindowHeight){
+            if (x_pos + width > WindowWidth || y_pos + height > WindowHeight)
+            {
                 color_buffer[3] = 0x00FFFFFF;
                 return;
             }
 
-            if( (x > x_pos && x < x_pos + width) && (y > y_pos && y < y_pos + height)){
+            if ((x > x_pos && x < x_pos + width) && (y > y_pos && y < y_pos + height))
+            {
                 color_buffer[(WindowWidth * y) + x] = color;
             }
-        
+        }
+    }
+}
+
+void draw_pixel(uint32_t color, int x_pos, int y_pos)
+{
+    for (int y = 0; y < WindowHeight; y++)
+    {
+        for (int x = 0; x < WindowWidth; x++)
+        {
+
+            if (x_pos  > WindowWidth || y_pos  > WindowHeight)
+            {
+                color_buffer[6] = 0xFFFFFFF;
+                return;
+            }
+
+            if ((x == x_pos && y == y_pos))
+            {
+                color_buffer[(WindowWidth * y) + x] = color;
+            }
         }
     }
 }
