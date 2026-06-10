@@ -127,21 +127,12 @@ void draw_rect(uint32_t color, int x_pos, int y_pos, int height, int width)
 
 void draw_pixel(uint32_t color, int x_pos, int y_pos)
 {
-    for (int y = 0; y < WindowHeight; y++)
+
+    if (x_pos > WindowWidth || y_pos > WindowHeight)
     {
-        for (int x = 0; x < WindowWidth; x++)
-        {
-
-            if (x_pos  > WindowWidth || y_pos  > WindowHeight)
-            {
-                color_buffer[6] = 0xFFFFFFF;
-                return;
-            }
-
-            if ((x == x_pos && y == y_pos))
-            {
-                color_buffer[(WindowWidth * y) + x] = color;
-            }
-        }
+        color_buffer[6] = 0xFFFFFFF;
+        return;
     }
+
+    color_buffer[(WindowWidth * y_pos) + x_pos] = color;
 }
