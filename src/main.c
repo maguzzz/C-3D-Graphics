@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 
 #include "display.h"
+#include "vector.h"
 
 void setup(void)
 {
@@ -55,7 +56,7 @@ void render(void)
     // clear_color_buffer(0x000000);
     draw_grid(0x212121, 10);
     draw_rect(0xFF00FFFF, 400, 800, 300, 500);
-    draw_pixel(0xFF00FFFF, 0, 20);
+    draw_pixel(0xFF00FFFF, 1200, 1200);
     //color_buffer[1] = 0xFFFFFFFF;
 
     SDL_RenderPresent(renderer);
@@ -66,6 +67,8 @@ int main(int argc, char *argv[])
     is_running = initialize_window();
 
     setup();
+
+    vecc3_t myvector = {2.0, 3.0,4.0};
 
     while (is_running)
     {
