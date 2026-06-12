@@ -6,6 +6,16 @@
 #include "display.h"
 #include "vector.h"
 
+////////////////////////////////////////////////////////////
+// Declaring an array of vector/points
+///////////////////////////////////////////////////////////
+#define N_POINTS (9 * 9 * 9)
+
+vecc3_t cube_points[N_POINTS]; // 9x9x9 cube
+vecc2_t projected_points[N_POINTS];
+
+float fov_factor = 128;
+
 void setup(void)
 {
     color_buffer = (uint32_t *)malloc(sizeof(uint32_t) * WindowWidth * WindowHeight);
@@ -20,6 +30,19 @@ void setup(void)
     if (!color_buffer)
     {
         fprintf(stderr, "MALLOC not enough memmory!");
+    }
+
+    int point_count = 0;
+    // Starting to load array of vectors
+    // From -1 to 1  in (9x9x9 cube)
+
+    for (float x = -1; x <= 1; x += 0.25){
+        for (float y = -1; y <= 1; y += 0.25){
+            for (float z = -1; z <= 1; z += 0.25){
+                vecc3_t new_point = {.x = x, .y = y , .z = z};
+                cube_points[point_count++] = new_point;
+            }
+        }
     }
 }
 
@@ -42,22 +65,53 @@ void proccess_input(void)
     }
 }
 
+
+////////////////////////////////////////////////////////////
+// Function that receives a 3D vector and retuns a projected 2d pont
+///////////////////////////////////////////////////////////
+vecc2_t project(vecc3_t point){
+    vecc2_t projected_point = {
+        .x = (fov_factor * point.x),
+        .y = (fov_factor * point.y),
+    };
+
+    return projected_point;
+}
+
+
 void update(void)
 {
+
+    for(int i = 0; i < N_POINTS; i++){
+        vecc3_t point = cube_points[i];
+
+        //Project the current point
+        vecc2_t projected_point = project(point);
+
+
+        // Save the projected 2D vector in the array of projected points 
+        projected_points[i] = projected_point;
+    }
 }
 
 void render(void)
 {
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
-    SDL_RenderClear(renderer);
-
     render_color_buffer();
-    // clear_color_buffer(0x000000);
+    clear_color_buffer(0x000000);
+
     draw_grid(0x212121, 10);
-    draw_rect(0xFF00FFFF, 400, 800, 300, 500);
-    draw_pixel(0xFF00FFFF, 1200, 1200);
-    //color_buffer[1] = 0xFFFFFFFF;
+
+    //Project All projected points
+    for(int i = 0; i <= N_POINTS; i++){
+        vecc2_t projected_point = projected_points[i];
+        draw_rect(
+            0xFF00FF00,
+            projected_point.x + (WindowWidth / 2),
+            projected_point.y + (WindowHeight / 2),
+            4,
+            4
+        );
+    }
 
     SDL_RenderPresent(renderer);
 }
@@ -68,7 +122,7 @@ int main(int argc, char *argv[])
 
     setup();
 
-    vecc3_t myvector = {2.0, 3.0,4.0};
+    vecc3_t myvector = {2.0, 3.0, 4.0};
 
     while (is_running)
     {
