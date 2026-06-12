@@ -14,7 +14,8 @@
 vecc3_t cube_points[N_POINTS]; // 9x9x9 cube
 vecc2_t projected_points[N_POINTS];
 
-float fov_factor = 128;
+vecc3_t camer_position = {.x = 0, .y = 0, .z = -5};
+float fov_factor = 640;
 
 void setup(void)
 {
@@ -71,8 +72,8 @@ void proccess_input(void)
 ///////////////////////////////////////////////////////////
 vecc2_t project(vecc3_t point){
     vecc2_t projected_point = {
-        .x = (fov_factor * point.x),
-        .y = (fov_factor * point.y),
+        .x = (fov_factor * point.x) / point.z,
+        .y = (fov_factor * point.y) / point.z,
     };
 
     return projected_point;
@@ -84,6 +85,9 @@ void update(void)
 
     for(int i = 0; i < N_POINTS; i++){
         vecc3_t point = cube_points[i];
+
+        //moving point away from camera
+        point.z -= camer_position.z;
 
         //Project the current point
         vecc2_t projected_point = project(point);
